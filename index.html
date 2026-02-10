@@ -745,9 +745,6 @@ fbq('track', 'Purchase', {
 }, {
   ph: phone
 });
-try {
-fbq('track','Purchase',{ value: price, currency:'EGP' });
-} catch(e){}
 
 await fetch('https://script.google.com/macros/s/AKfycbwtgrOr7u6Id6Cg4FwVYgIAcU-MbmdYJuGYNOCkR6CF964QLwoUb5bfBJP4kpc-HZI/exec',{
 method:'POST',
@@ -793,5 +790,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </body>
 </html>
+
 
 
