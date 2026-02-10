@@ -739,7 +739,10 @@ submitBtn.disabled = true;
 submitBtn.textContent="⏳ جاري تأكيد الطلب... برجاء الانتظار";
 
 const price = Number(selectedOffer.value);
-  fbq('set', 'userData', {
+fbq('track', 'Purchase', {
+  value: price,
+  currency: 'EGP'
+}, {
   ph: phone
 });
 try {
@@ -790,4 +793,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </body>
 </html>
+
 
