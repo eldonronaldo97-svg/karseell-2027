@@ -739,6 +739,9 @@ submitBtn.disabled = true;
 submitBtn.textContent="⏳ جاري تأكيد الطلب... برجاء الانتظار";
 
 const price = Number(selectedOffer.value);
+  fbq('set', 'userData', {
+  ph: phone
+});
 try {
 fbq('track','Purchase',{ value: price, currency:'EGP' });
 } catch(e){}
@@ -753,7 +756,6 @@ body:JSON.stringify(Object.fromEntries(new FormData(form).entries()))
 submitBtn.textContent="✅ تم تأكيد طلبك بنجاح!";
 submitBtn.style.background="#2ecc71";
 successMsg.style.display='block';
-trackPurchase();
 form.reset();
 });
 </script>
@@ -784,14 +786,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-/* Purchase عند نجاح الطلب */
-function trackPurchase() {
-  fbq('track', 'Purchase', {
-    value: selectedOffer,
-    currency: 'EGP'
-  });
-}
 </script>
 
 </body>
 </html>
+
