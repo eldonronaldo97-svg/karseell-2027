@@ -322,7 +322,7 @@ btn.textContent='جاري التأكيد...';
 const price=Number(priceInput.value);
 fbq('track','Purchase',{value:price,currency:'EGP'},{ph:phone});
 
-await fetch('https://script.google.com/macros/s/AKfycbwtgrOr7u6Id6Cg4FwVYgIAcU-MbmdYJuGYNOCkR6CF964QLwoUb5bfBJP4kpc-HZI/exec',{
+await fetch('https://script.google.com/macros/s/AKfycbzBSX1R9V1VSawZQWHD-6d0fwfKLP4Q5I0BRfw__IlAOAsHKjUI-tnhGx0Gz6jMuHSi/exec',{
 method:'POST',mode:'no-cors',
 headers:{'Content-Type':'application/json'},
 body:JSON.stringify(Object.fromEntries(new FormData(form)))
@@ -337,4 +337,5 @@ form.reset();
 
 </body>
 </html>
+
 
