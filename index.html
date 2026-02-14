@@ -263,6 +263,7 @@ grid-template-columns:1fr
 <section id="order">
 <form id="orderForm">
 <input type="hidden" id="price" name="offer" value="399">
+<input type="hidden" id="event_id" name="event_id">
 
 <input name="name" placeholder="الاسم الكامل" required>
 <input name="phone" placeholder="رقم الموبايل" required>
@@ -319,8 +320,20 @@ if(!/^01\d{9}$/.test(phone)){alert('رقم غير صحيح');return;}
 btn.disabled=true;
 btn.textContent='جاري التأكيد...';
 
-const price=Number(priceInput.value);
-fbq('track','Purchase',{value:price,currency:'EGP'},{ph:phone});
+const price = Number(priceInput.value);
+const eventID = Date.now().toString();
+
+// نحفظ الـ eventID عشان يتبعت مع الفورم للسيرفر
+document.getElementById('event_id').value = eventID;
+
+// إرسال Purchase من المتصفح
+fbq('track','Purchase',{
+  value: price,
+  currency: 'EGP'
+},{
+  eventID: eventID
+});
+
 
 await fetch('https://script.google.com/macros/s/AKfycbwiydoJiRwL-SBQRxKpM4Fic_ZYBdS3g8Ohh0glctc5PH097DNzYOUV3IUgH-R5Aeml/exec',{
 method:'POST',mode:'no-cors',
@@ -337,6 +350,7 @@ form.reset();
 
 </body>
 </html>
+
 
 
 
