@@ -263,7 +263,6 @@ grid-template-columns:1fr
 <section id="order">
 <form id="orderForm">
 <input type="hidden" id="price" name="offer" value="399">
-<input type="hidden" id="event_id" name="event_id">
 
 <input name="name" placeholder="الاسم الكامل" required>
 <input name="phone" placeholder="رقم الموبايل" required>
@@ -293,74 +292,65 @@ grid-template-columns:1fr
 <footer>© Karseell Egypt</footer>
 
 <script>
-const offers=document.querySelectorAll('.offer'),
-priceInput=document.getElementById('price'),
-form=document.getElementById('orderForm'),
-btn=document.getElementById('submitBtn'),
-success=document.getElementById('successMsg');
+const offers = document.querySelectorAll('.offer'),
+priceInput = document.getElementById('price'),
+form = document.getElementById('orderForm'),
+btn = document.getElementById('submitBtn'),
+success = document.getElementById('successMsg');
 
+// اختيار العرض
 offers.forEach(o=>{
-o.onclick=()=>{
-offers.forEach(x=>x.classList.remove('active'));
-o.classList.add('active');
-priceInput.value=o.dataset.price;
-fbq('track','AddToCart',{value:o.dataset.price,currency:'EGP'});
-};
+  o.onclick = ()=>{
+    offers.forEach(x=>x.classList.remove('active'));
+    o.classList.add('active');
+    priceInput.value = o.dataset.price;
+
+    fbq('track','AddToCart',{
+      value: Number(o.dataset.price),
+      currency:'EGP'
+    });
+  };
 });
 
+// منع كتابة حروف في الموبايل
 form.phone.addEventListener('input',()=>{
-form.phone.value=form.phone.value.replace(/\D/g,'');
+  form.phone.value = form.phone.value.replace(/\D/g,'');
 });
 
-form.onsubmit=async e=>{
-e.preventDefault();
-const phone=form.phone.value.trim();
-if(!/^01\d{9}$/.test(phone)){alert('رقم غير صحيح');return;}
+// عند إرسال الطلب
+form.onsubmit = function(e){
+  e.preventDefault();
 
-btn.disabled=true;
-btn.textContent='جاري التأكيد...';
+  const phone = form.phone.value.trim();
+  if(!/^01\d{9}$/.test(phone)){
+    alert('رقم غير صحيح');
+    return;
+  }
 
-const price = Number(priceInput.value);
-const eventID = Date.now().toString();
+  btn.disabled = true;
+  btn.textContent = 'جاري التأكيد...';
 
-// نحفظ الـ eventID عشان يتبعت مع الفورم للسيرفر
-document.getElementById('event_id').value = eventID;
+  const price = Number(priceInput.value);
 
-// إرسال Purchase من المتصفح
-fbq('trackCustom','InitiateCheckout');
-fbq('track','Purchase',{
-  value: price,
-  currency: 'EGP'
-},{
-  eventID: eventID
-});
+  // InitiateCheckout
+  fbq('track','InitiateCheckout');
 
-await fetch('https://script.google.com/macros/s/AKfycbwtM0yrRZIOjddxdkB5ngEjJwErAIrujekIB1c6L6xgVKSw3jtlw05nAAd8MIH-4i8/exec', {
-  method: 'POST',
-  mode: 'no-cors',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(Object.fromEntries(new FormData(form)))
-});
+  // Purchase
+  fbq('track','Purchase',{
+    value: price,
+    currency: 'EGP'
+  });
 
+  // هنا حط كود إرسال البيانات لجوجل شيت لو حابب
+  fetch('https://script.google.com/macros/s/AKfycbwtM0yrRZIOjddxdkB5ngEjJwErAIrujekIB1c6L6xgVKSw3jtlw05nAAd8MIH-4i8/exec', {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify(Object.fromEntries(new FormData(form)))
+  });
 
-success.style.display='block';
-btn.textContent='تم بنجاح';
-btn.style.background='#22c55e';
-form.reset();
+  success.style.display = 'block';
+  btn.textContent = 'تم بنجاح';
+  btn.style.background = '#22c55e';
+  form.reset();
 };
 </script>
-
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
