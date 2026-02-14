@@ -328,12 +328,6 @@ document.getElementById('event_id').value = eventID;
 
 // إرسال Purchase من المتصفح
 fbq('trackCustom','InitiateCheckout');
-  fbq('track','Purchase',{
-  value: price,
-  currency: 'EGP'
-},{
-  eventID: eventID
-});
 
 
 await fetch('https://script.google.com/macros/s/AKfycbwtM0yrRZIOjddxdkB5ngEjJwErAIrujekIB1c6L6xgVKSw3jtlw05nAAd8MIH-4i8/exec',{
@@ -351,6 +345,7 @@ form.reset();
 
 </body>
 </html>
+
 
 
 
