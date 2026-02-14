@@ -327,7 +327,8 @@ const eventID = Date.now().toString();
 document.getElementById('event_id').value = eventID;
 
 // إرسال Purchase من المتصفح
-fbq('track','Purchase',{
+fbq('trackCustom','InitiateCheckout');
+  fbq('track','Purchase',{
   value: price,
   currency: 'EGP'
 },{
@@ -350,6 +351,7 @@ form.reset();
 
 </body>
 </html>
+
 
 
 
