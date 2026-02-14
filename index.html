@@ -328,16 +328,19 @@ document.getElementById('event_id').value = eventID;
 
 // إرسال Purchase من المتصفح
 fbq('trackCustom','InitiateCheckout');
-
-
-const res = await fetch('https://script.google.com/macros/s/XXXX/exec',{
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body: JSON.stringify(Object.fromEntries(new FormData(form)))
+fbq('track','Purchase',{
+  value: price,
+  currency: 'EGP'
+},{
+  eventID: eventID
 });
 
-const text = await res.text();
-console.log("SERVER RESPONSE:", text);
+await fetch('https://script.google.com/macros/s/AKfycbwtM0yrRZIOjddxdkB5ngEjJwErAIrujekIB1c6L6xgVKSw3jtlw05nAAd8MIH-4i8/exec', {
+  method: 'POST',
+  mode: 'no-cors',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(Object.fromEntries(new FormData(form)))
+});
 
 
 success.style.display='block';
@@ -349,6 +352,7 @@ form.reset();
 
 </body>
 </html>
+
 
 
 
