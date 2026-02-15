@@ -236,7 +236,7 @@ grid-template-columns:1fr
 <!-- العروض -->
 <section class="offers">
 
-<div class="offer" data-price="599">
+<div class="offer active" data-price="599">
 <img src="offer2.jpg" loading="lazy" alt="">
 <h3>عرض 1 / ماسك + سيروم</h3>
 <p>599 جنيه</p>
@@ -256,7 +256,7 @@ grid-template-columns:1fr
 <!-- الفورم -->
 <section id="order">
 <form id="orderForm">
-<input type="hidden" id="price" name="offer" value="399">
+<input type="hidden" id="selectedOffer" name="offer" value="599">
 
 <input name="name" placeholder="الاسم الكامل" required>
 <input name="phone" placeholder="رقم الموبايل" required>
@@ -376,6 +376,7 @@ function trackPurchase() {
 
 </body>
 </html>
+
 
 
 
