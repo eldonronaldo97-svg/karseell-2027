@@ -286,98 +286,78 @@ grid-template-columns:1fr
 <footer>© Karseell Egypt</footer>
 
 <script>
-const offers = document.querySelectorAll('.offer-card');
-const selectedOffer = document.getElementById('selectedOffer');
-const form = document.getElementById('orderForm');
-const successMsg = document.getElementById('successMsg');
-const submitBtn = document.getElementById('submitBtn');
+document.addEventListener("DOMContentLoaded", function () {
 
-/* منع الحروف – أرقام فقط */
-form.phone.addEventListener('input', () => {
-form.phone.value = form.phone.value.replace(/\D/g,'');
-});
+  const offers = document.querySelectorAll('.offer');
+  const selectedInput = document.getElementById('selectedOffer');
+  const form = document.getElementById('orderForm');
+  const successMsg = document.getElementById('successMsg');
+  const submitBtn = document.getElementById('submitBtn');
 
-offers.forEach(offer=>{
-offer.addEventListener('click',()=>{
-offers.forEach(o=>o.classList.remove('selected'));
-offer.classList.add('selected');
-selectedOffer.value = offer.dataset.offer;
-});
-});
+  // تفعيل أول عرض تلقائي
+  if (offers.length > 0) {
+    offers[0].classList.add('active');
+    selectedInput.value = offers[0].dataset.price;
+  }
 
-form.addEventListener('submit', async e=>{
-e.preventDefault();
+  // تغيير العرض عند الضغط
+  offers.forEach(offer => {
+    offer.addEventListener('click', function () {
 
-const phone = form.phone.value.trim();
+      offers.forEach(o => o.classList.remove('active'));
+      this.classList.add('active');
 
-/* تحقق: 11 رقم ويبدأ بـ 01 */
-if(!/^01\d{9}$/.test(phone)){
-alert('من فضلك أدخل رقم موبايل صحيح يبدأ بـ 01 ومكون من 11 رقم');
-return;
-}
-
-submitBtn.disabled = true;
-submitBtn.textContent="⏳ جاري تأكيد الطلب... برجاء الانتظار";
-
-const price = Number(selectedOffer.value);
-try {
-fbq('track','Purchase',{ value: price, currency:'EGP' });
-} catch(e){}
-
-await fetch('https://script.google.com/macros/s/AKfycbwtM0yrRZIOjddxdkB5ngEjJwErAIrujekIB1c6L6xgVKSw3jtlw05nAAd8MIH-4i8/exec',{
-method:'POST',
-mode:'no-cors',
-headers:{'Content-Type':'application/json'},
-body:JSON.stringify(Object.fromEntries(new FormData(form).entries()))
-});
-
-submitBtn.textContent="✅ تم تأكيد طلبك بنجاح!";
-submitBtn.style.background="#2ecc71";
-successMsg.style.display='block';
-trackPurchase();
-form.reset();
-});
-</script>
-
-<script>
-/* السعر الافتراضي */
-let selectedOffer = 399;
-
-document.addEventListener('DOMContentLoaded', function () {
-
-  /* AddToCart عند اختيار العرض */
-  document.querySelectorAll('.offer-card').forEach(card => {
-    card.addEventListener('click', function () {
-
-      let price = this.closest('.offer-card').getAttribute('data-offer');
-
-      document.getElementById('selectedOffer').value = price;
-      selectedOffer = price;
+      selectedInput.value = this.dataset.price;
 
       fbq('track', 'AddToCart', {
         content_name: 'Karseell Offer',
-        value: price,
+        value: this.dataset.price,
         currency: 'EGP'
       });
 
     });
   });
 
-});
-
-/* Purchase عند نجاح الطلب */
-function trackPurchase() {
-  fbq('track', 'Purchase', {
-    value: selectedOffer,
-    currency: 'EGP'
+  /* منع الحروف – أرقام فقط */
+  form.phone.addEventListener('input', () => {
+    form.phone.value = form.phone.value.replace(/\D/g,'');
   });
-}
+
+  /* إرسال الفورم */
+  form.addEventListener('submit', async e=>{
+    e.preventDefault();
+
+    const phone = form.phone.value.trim();
+
+    if(!/^01\d{9}$/.test(phone)){
+      alert('من فضلك أدخل رقم موبايل صحيح يبدأ بـ 01 ومكون من 11 رقم');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent="⏳ جاري تأكيد الطلب... برجاء الانتظار";
+
+    const price = Number(selectedInput.value);
+
+    try {
+      fbq('track','Purchase',{ value: price, currency:'EGP' });
+    } catch(e){}
+
+    await fetch('https://script.google.com/macros/s/AKfycbwtM0yrRZIOjddxdkB5ngEjJwErAIrujekIB1c6L6xgVKSw3jtlw05nAAd8MIH-4i8/exec',{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(Object.fromEntries(new FormData(form).entries()))
+    });
+
+    submitBtn.textContent="✅ تم تأكيد طلبك بنجاح!";
+    submitBtn.style.background="#2ecc71";
+    successMsg.style.display='block';
+    form.reset();
+  });
+
+});
 </script>
 
 </body>
 </html>
-
-
-
-
-
