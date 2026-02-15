@@ -286,67 +286,95 @@ grid-template-columns:1fr
 <footer>© Karseell Egypt</footer>
 
 <script>
-const offers = document.querySelectorAll('.offer'),
-priceInput = document.getElementById('price'),
-form = document.getElementById('orderForm'),
-btn = document.getElementById('submitBtn'),
-success = document.getElementById('successMsg');
+const offers = document.querySelectorAll('.offer-card');
+const selectedOffer = document.getElementById('selectedOffer');
+const form = document.getElementById('orderForm');
+const successMsg = document.getElementById('successMsg');
+const submitBtn = document.getElementById('submitBtn');
 
-// اختيار العرض
-offers.forEach(o=>{
-  o.onclick = ()=>{
-    offers.forEach(x=>x.classList.remove('active'));
-    o.classList.add('active');
-    priceInput.value = o.dataset.price;
+/* منع الحروف – أرقام فقط */
+form.phone.addEventListener('input', () => {
+form.phone.value = form.phone.value.replace(/\D/g,'');
+});
 
-    fbq('track','AddToCart',{
-      value: Number(o.dataset.price),
-      currency:'EGP'
+offers.forEach(offer=>{
+offer.addEventListener('click',()=>{
+offers.forEach(o=>o.classList.remove('selected'));
+offer.classList.add('selected');
+selectedOffer.value = offer.dataset.offer;
+});
+});
+
+form.addEventListener('submit', async e=>{
+e.preventDefault();
+
+const phone = form.phone.value.trim();
+
+/* تحقق: 11 رقم ويبدأ بـ 01 */
+if(!/^01\d{9}$/.test(phone)){
+alert('من فضلك أدخل رقم موبايل صحيح يبدأ بـ 01 ومكون من 11 رقم');
+return;
+}
+
+submitBtn.disabled = true;
+submitBtn.textContent="⏳ جاري تأكيد الطلب... برجاء الانتظار";
+
+const price = Number(selectedOffer.value);
+try {
+fbq('track','Purchase',{ value: price, currency:'EGP' });
+} catch(e){}
+
+await fetch('https://script.google.com/macros/s/AKfycbwtM0yrRZIOjddxdkB5ngEjJwErAIrujekIB1c6L6xgVKSw3jtlw05nAAd8MIH-4i8/exec',{
+method:'POST',
+mode:'no-cors',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify(Object.fromEntries(new FormData(form).entries()))
+});
+
+submitBtn.textContent="✅ تم تأكيد طلبك بنجاح!";
+submitBtn.style.background="#2ecc71";
+successMsg.style.display='block';
+trackPurchase();
+form.reset();
+});
+</script>
+
+<script>
+/* السعر الافتراضي */
+let selectedOffer = 699;
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* AddToCart عند اختيار العرض */
+  document.querySelectorAll('.offer-card').forEach(card => {
+    card.addEventListener('click', function () {
+
+      let price = this.closest('.offer-card').getAttribute('data-offer');
+
+      document.getElementById('selectedOffer').value = price;
+      selectedOffer = price;
+
+      fbq('track', 'AddToCart', {
+        content_name: 'Karseell Offer',
+        value: price,
+        currency: 'EGP'
+      });
+
     });
-  };
+  });
+
 });
 
-// منع كتابة حروف في الموبايل
-form.phone.addEventListener('input',()=>{
-  form.phone.value = form.phone.value.replace(/\D/g,'');
-});
-
-// عند إرسال الطلب
-form.onsubmit = function(e){
-  e.preventDefault();
-
-  const phone = form.phone.value.trim();
-  if(!/^01\d{9}$/.test(phone)){
-    alert('رقم غير صحيح');
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'جاري التأكيد...';
-
-  const price = Number(priceInput.value);
-
-  // InitiateCheckout
-  fbq('track','InitiateCheckout');
-
-  // Purchase
-  fbq('track','Purchase',{
-    value: price,
+/* Purchase عند نجاح الطلب */
+function trackPurchase() {
+  fbq('track', 'Purchase', {
+    value: selectedOffer,
     currency: 'EGP'
   });
-
-  // هنا حط كود إرسال البيانات لجوجل شيت لو حابب
-  fetch('https://script.google.com/macros/s/AKfycbwtM0yrRZIOjddxdkB5ngEjJwErAIrujekIB1c6L6xgVKSw3jtlw05nAAd8MIH-4i8/exec', {
-    method: 'POST',
-    mode: 'no-cors',
-    body: JSON.stringify(Object.fromEntries(new FormData(form)))
-  });
-
-  success.style.display = 'block';
-  btn.textContent = 'تم بنجاح';
-  btn.style.background = '#22c55e';
-  form.reset();
-};
+}
 </script>
+
+</body>
+</html>
 
 
